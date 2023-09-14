@@ -6,6 +6,12 @@ from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.http import HttpResponse  
 from functions.function import handle_uploaded_file,restore
 from accounts.forms import FileForm
+# appname/views.py
+from django.http import HttpResponseNotFound
+
+def handle_invalid_url(request, path):
+    return HttpResponseNotFound("Enter a valid URL.")
+
      
 @login_required
 def home_view(request):

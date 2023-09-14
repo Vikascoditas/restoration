@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from accounts.views import login_view,logout_view,home_view
-
+from django.urls import re_path
+from accounts import views
 
 urlpatterns = [
     path('',login_view ),
@@ -25,4 +26,6 @@ urlpatterns = [
      path('login/',login_view ),
      path('logout/',logout_view),
     path('admin/', admin.site.urls),
+    re_path(r'url\/?$', views.handle_invalid_url),
+
 ]
