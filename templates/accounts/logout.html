@@ -1,19 +1,92 @@
-
-
 {% block content %}
-{% if user.is_authenticated %}
-<div style="margin-top:30px ;">
-   <form method="POST">
-    {% csrf_token %}
-    <p>Are you sure you want to logout?</p>
-    <button type="submit">Yes,Logout.</button>
-    
-   </form>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #0084ff; /* Updated background color */
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .company-name {
+        font-size: 7em;
+        color: #ffffff;
+        font-weight: bold;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 15px 0;
+        z-index: 1;
+    }
+
+    .content-box {
+        text-align: center;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Increased box shadow for depth */
+        width: 300px;
+        background-color: #ffffff; /* White background */
+    }
+
+    h2 {
+        font-size: 24px; /* Increased font size */
+        margin-bottom: 20px;
+        color: #0084ff; /* Blue color for headings */
+    }
+
+    p {
+        font-size: 18px; /* Increased font size */
+        color: #333; /* Darker text color for better readability */
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .btn-danger {
+        background-color: #e74c3c;
+        color: #fff;
+    }
+
+    .btn-primary {
+        background-color: #0084ff;
+        color: #fff;
+    }
+</style>
+
+<div class="company-name">CAS</div>
+<div class="container">
+    <div class="content-box">
+        {% if user.is_authenticated %}
+            <h2>Logout Confirmation</h2>
+            <p>Are you sure you want to logout?</p>
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Logout</button>
+            </form>
+        {% else %}
+            <h2>You're Not Logged In</h2>
+            <p>It seems you are not logged in. Would you like to <a href="/login/" class="btn btn-primary">Login</a>?</p>
+        {% endif %}
+    </div>
 </div>
-
-{% else %}
-<p>You're not logged in .Would u like to <a href='/login/'>login</a>?</p>
-
-{% endif %}
-
 {% endblock %}
