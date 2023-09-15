@@ -68,7 +68,7 @@
         }
 
         .company-name {
-            font-size: 7em; /* Increased font size */
+            font-size: 3em; /* Increased font size */
             color: #000000; /* Black color */
             font-weight: bold;
             position: absolute;
@@ -83,17 +83,27 @@
     </style>
 </head>
 <body>
-    <div class="company-name">CAS</div>
+    <div class="company-name">CAS RECORDING RESTORATION</div>
     <div class="login-container">
         <h2>Login to Your Account</h2>
         <form method="POST">
             {% csrf_token %}
+            <style>
+               #id_username {
+                   width: 200px;
+               }
+           </style>
             <div class="form-group">
-                <label for="id_username">Username</label>
+                <label for="id_username">USERNAME</label>
                 {{ form.username }}
             </div>
+            <style>
+               #id_password {
+                   width: 200px;
+               }
+           </style>
             <div class="form-group">
-                <label for="id_password">Password</label>
+                <label for="id_password">PASSWORD</label>
                 {{ form.password }}
             </div>
             <button type="submit" class="login-button">Login</button>
