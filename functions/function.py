@@ -22,9 +22,9 @@ def handle_uploaded_file(f):
 
 
 def restore(f):
-    username = 'coditas'
-    vm_ip_address = '34.67.84.213'
-    remote_file_path = '/home/coditas/file.txt'
+    username = 'ec2-user'
+    vm_ip_address = '10.40.1.101'
+    remote_file_path = '/home/ec2-user/file.txt'
     script_directory = os.path.dirname(os.path.abspath(__file__))
 
     # Construct the path to the id_rsa file relative to the script's location
@@ -63,7 +63,7 @@ def restore(f):
         # Execute the modified restore.sh script
         command = 'sudo su'
         ssh_client.exec_command(command)
-        command = 'chmod +x ~/restore.sh && ~/restore.sh'
+        command = './trial.sh'
         stdin, stdout, stderr = ssh_client.exec_command(command)
 
         # Wait for the command to finish
