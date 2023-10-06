@@ -61,9 +61,8 @@ def restore(f):
         os.remove(local_file_path)
 
         # Execute the modified restore.sh script
-        command = 'sudo su'
-        ssh_client.exec_command(command)
-        command = './trial.sh'
+        
+        command = command = 'sudo su - -c "cd /home/ec2-user/ && ./trial.sh"'
         stdin, stdout, stderr = ssh_client.exec_command(command)
 
         # Wait for the command to finish
