@@ -23,7 +23,7 @@ SECRET_KEY = 'django-insecure-k%+_bga9)un5onl-c@xgrsz=3$5p!&1ax1dqvr9#fgm))uul4*
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-CSRF_TRUSTED_ORIGINS = ['https://django-app-4rxve2tbha-uc.a.run.app']
+CSRF_TRUSTED_ORIGINS = ['https://recording-restore-gpkrdhuhbq-uw.a.run.app']
 
 ALLOWED_HOSTS = ['*']
 
