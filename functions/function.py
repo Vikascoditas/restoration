@@ -6,7 +6,6 @@ import tempfile
 
 def process_excel_and_create_text_file(input_xlsx_file, output_text_file):
     try:
-        # Create a temporary directory to store the uploaded file
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_file_path = os.path.join(temp_dir, input_xlsx_file.name)
             with open(temp_file_path, 'wb') as temp_file:
@@ -16,7 +15,6 @@ def process_excel_and_create_text_file(input_xlsx_file, output_text_file):
             df = pd.read_excel(temp_file_path, engine='openpyxl')
 
 
-            # Convert the date and time columns to datetime format with the specified format
             df['DateofCall'] = pd.to_datetime(df['DateofCall'], format='mixed')
             df['Starttime'] = pd.to_datetime(df['Starttime'],format='%H:%M:%S')
             df['FormattedData'] = df.apply(lambda row: f"{row['DateofCall'].strftime('%Y-%m-%d')}/{row['Starttime'].strftime('%H/%M')}", axis=1)
@@ -56,7 +54,7 @@ def restore(f):
 
     try:
         ssh_client.connect(hostname=vm_ip_address, username=username, pkey=private_key)
-        local_file_path = 'output_text_file.txt'  # Replace with the local file path
+        local_file_path = 'output_text_file.txt'  
         scp_client = ssh_client.open_sftp()
         scp_client.put(local_file_path, remote_file_path)
         scp_client.close()

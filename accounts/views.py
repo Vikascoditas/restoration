@@ -17,21 +17,20 @@ def home_view(request):
     if request.method == 'POST':
         form = FileForm(request.POST, request.FILES)
         if form.is_valid():
-            # Use the "file" field from the form
             input_xlsx_file = form.cleaned_data['file']
-            current_directory = os.getcwd()  # Get the current working directory
-            output_text_file = os.path.join(current_directory, 'output_text_file.txt')  # Specify the desired output text file path
+            current_directory = os.getcwd()  
+            output_text_file = os.path.join(current_directory, 'output_text_file.txt')  
             process_excel_and_create_text_file(input_xlsx_file, output_text_file)
             restore(output_text_file)
             return render(request, "accounts/success.html", {})
     else:
-        form = FileForm()  # Create an empty form if it's a GET request
+        form = FileForm() 
 
     return render(request, "accounts/home.html", {'form': form})
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('/home')  # Redirect to home if already logged in
+        return redirect('/home')  
 
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
