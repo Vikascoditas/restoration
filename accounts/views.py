@@ -12,7 +12,6 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 def handle_invalid_url(request, path):
     return HttpResponseNotFound("Enter a valid URL.")
 
-@login_required
 def home_view(request):
     if request.method == 'POST':
         form = FileForm(request.POST, request.FILES)
