@@ -24,7 +24,7 @@ urlpatterns = [
     path('',home_view ),
     path('home/',home_view),
      path('login/',home_view ),
-     path('logout/',logout_view),
+     path('logout/',home_view),
     path('admin/', admin.site.urls),
     re_path(r'url\/?$', views.handle_invalid_url),
 
