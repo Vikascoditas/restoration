@@ -16,8 +16,8 @@ def process_excel_and_create_text_file(input_xlsx_file, output_text_file):
 
 
             df['DateofCall'] = pd.to_datetime(df['DateofCall'], format='mixed')
-            df['Starttime'] = pd.to_datetime(df['Starttime'],format='%H:%M:%S')
-            df['FormattedData'] = df.apply(lambda row: f"{row['DateofCall'].strftime('%Y-%m-%d')}/{row['Starttime'].strftime('%H/%M')}", axis=1)
+            df['StartTime'] = pd.to_datetime(df['StartTime'],format='%H:%M:%S')
+            df['FormattedData'] = df.apply(lambda row: f"{row['DateofCall'].strftime('%Y-%m-%d')}/{row['StartTime'].strftime('%H/%M')}", axis=1)
 
             with open(output_text_file, 'w') as text_file:
                 for data in df['FormattedData']:
