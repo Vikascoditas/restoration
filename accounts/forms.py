@@ -1,5 +1,5 @@
 from django import forms  
 
 
-class FileForm(forms.Form):  
-    file  = forms.FileField() # for creating file input  
+class FileForm(forms.Form):
+    file = forms.FileField()
