@@ -1,85 +1,57 @@
+from django.http import HttpResponse, HttpResponseNotFound
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
+from functions.function import handle_uploaded_file, restore, process_excel_and_create_text_file
+from accounts.forms import FileForm
 import os
-import paramiko
-import io
-import pandas as pd
-import tempfile
-
-def process_excel_and_create_text_file(input_xlsx_file, script_directory):
-    try:
-        # Create a temporary directory to store the uploaded file
-        with tempfile.TemporaryDirectory() as temp_dir:
-            temp_file_path = os.path.join(temp_dir, input_xlsx_file.name)
-            with open(temp_file_path, 'wb') as temp_file:
-                for chunk in input_xlsx_file.chunks():
-                    temp_file.write(chunk)
-
-            df = pd.read_excel(temp_file_path, engine='openpyxl')
-
-            # Convert the date and time columns to datetime format with the specified format
-            df['DateofCall'] = pd.to_datetime(df['DateofCall'], format='mixed')
-            df['Starttime'] = pd.to_datetime(df['Starttime'], format='%H:%M:%S')
-            output_text_file = os.path.join(script_directory, 'output_text_file.txt')
-            df['FormattedData'] = df.apply(lambda row: f"{row['DateofCall'].strftime('%Y-%m-%d')}/{row['Starttime'].strftime('%H/%M')}", axis=1)
-
-            with open(output_text_file, 'w') as text_file:
-                for data in df['FormattedData']:
-                    text_file.write(f"{data}\n")
-
-            print(f"Data extracted and written to {output_text_file}")
-            return output_text_file  # Return the path to the created text file
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        return None  # Return None in case of an error
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
-def handle_uploaded_file(f):
-    local_directory = 'static/upload/'
-    os.makedirs(local_directory, exist_ok=True)
-    local_file_path = os.path.join(local_directory, f.name)
+def handle_invalid_url(request, path):
+    return HttpResponseNotFound("Enter a valid URL.")
 
-    with open(local_file_path, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+def home_view(request):
+    if not request.user.is_authenticated:
+        return redirect('/login')  # Redirect unauthenticated users to the login page
 
-    return local_file_path
+    if request.method == 'POST':
+        form = FileForm(request.POST, request.FILES)
+        if form.is_valid():
+            input_xlsx_file = form.cleaned_data['file']
+            script_directory = os.path.dirname(os.path.abspath(__file__))
+            output_text_file_path = process_excel_and_create_text_file(input_xlsx_file, script_directory)
+            if output_text_file_path:
+                restore(output_text_file_path)
+                return render(request, "accounts/success.html", {})
+                
+    else:
+        form = FileForm()
 
-def restore(output_text_file):
-    username = 'ec2-user'
-    vm_ip_address = '10.40.1.101'
-    remote_file_path = '/home/ec2-user/file.txt'
-    script_directory = os.path.dirname(os.path.abspath(__file__))
+    return render(request, "accounts/home.html", {'form': form})
 
-    id_rsa_path = os.path.join(script_directory, 'id_rsa')
+def login_view(request):
+    # if request.user.is_authenticated:
+    #     return redirect('/home')
 
-    with open(id_rsa_path, 'r') as file:
-        private_key_string = file.read()
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            if not (user.username == 'Coditas' or user.username == 'vikas'):
+                return HttpResponse("Authentication failed. Access denied.")
 
-    private_key = paramiko.RSAKey(file_obj=io.StringIO(private_key_string))
-    ssh_client = paramiko.SSHClient()
-    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            login(request, user)
+            return redirect('/home')
+    else:
+        form = AuthenticationForm(request)
+    context = {"form": form}
+    return render(request, 'accounts/login.html', context=context)
 
-    try:
-        ssh_client.connect(hostname=vm_ip_address, username=username, pkey=private_key)
-        scp_client = ssh_client.open_sftp()
-        scp_client.put(output_text_file, remote_file_path)
-        scp_client.close()
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        return redirect("/login")
 
-        command = 'sudo su - -c "cd /home/ec2-user/ && ./trial.sh"'
-        stdin, stdout, stderr = ssh_client.exec_command(command)
-        exit_status = stdout.channel.recv_exit_status()
-
-        if exit_status != 0:
-            print(f"Command failed with exit status {exit_status}")
-
-        output = stdout.read().decode('utf-8')
-        print("Output:")
-        print(output)
-
-    except paramiko.AuthenticationException as auth_err:
-        print("Authentication failed:", auth_err)
-    except paramiko.SSHException as ssh_err:
-        print("SSH connection failed:", ssh_err)
-    except Exception as e:
-        print("An error occurred:", e)
-    finally:
-        ssh_client.close()
+    return render(request, 'accounts/logout.html', {})
