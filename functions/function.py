@@ -16,8 +16,8 @@ def process_excel_and_create_text_file(input_xlsx_file, script_directory):
             df = pd.read_excel(temp_file_path, engine='openpyxl')
 
             # Convert the date and time columns to datetime format with the specified format
-            df['DateofCall'] = pd.to_datetime(df['DateofCall'], format='mixed')
-            df['Starttime'] = pd.to_datetime(df['Starttime'], format='%H:%M:%S')
+            df['dateofcall'] = pd.to_datetime(df['dateofcall'], format='mixed')
+            df['starttime'] = pd.to_datetime(df['starttime'], format='%H:%M:%S')
             output_text_file = os.path.join(script_directory, 'output_text_file.txt')
             df['FormattedData'] = df.apply(lambda row: f"{row['DateofCall'].strftime('%Y-%m-%d')}/{row['Starttime'].strftime('%H/%M')}", axis=1)
 
